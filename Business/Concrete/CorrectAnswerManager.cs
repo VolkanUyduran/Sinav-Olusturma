@@ -16,27 +16,27 @@ namespace Business.Concrete
             _correctAnswerDal = correctAnswerDal;
         }
 
-        public void Create(CorrectAnswer entity)
+        public void Create(UserAnswer entity)
         {
             _correctAnswerDal.Insert(entity);
         }
 
-        public void Delete(CorrectAnswer entity)
+        public void Delete(UserAnswer entity)
         {
             _correctAnswerDal.Delete(entity);
         }
 
-        public List<CorrectAnswer> GetAll()
+        public List<UserAnswer> GetAll()
         {
             return _correctAnswerDal.List();
         }
 
-        public CorrectAnswer GetById(int id)
+        public UserAnswer GetById(int id)
         {
-            return _correctAnswerDal.Get(x => x.CorrectId == id);
+            return _correctAnswerDal.Get(x => x.OptionId == id);
         }
 
-        public void Update(CorrectAnswer entity)
+        public void Update(UserAnswer entity)
         {
             _correctAnswerDal.Update(entity);
         }

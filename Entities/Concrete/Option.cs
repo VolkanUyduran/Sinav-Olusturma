@@ -16,6 +16,6 @@ namespace Entities.Concrete
         public int QuestionId { get; set; }
         public virtual Question Question { get; set; }
 
-        public ICollection<CorrectAnswer> CorrectAnswers { get; set; }
+        public ICollection<UserAnswer> UserAnswer { get; set; }
     }
 }

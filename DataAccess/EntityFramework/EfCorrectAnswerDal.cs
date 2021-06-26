@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DataAccess.EntityFramework
 {
-    public class EfCorrectAnswerDal: GenericRepository<CorrectAnswer>,ICorrectAnswerDal
+    public class EfCorrectAnswerDal: GenericRepository<UserAnswer>,ICorrectAnswerDal
     {
 
     }

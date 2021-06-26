@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DataAccess.Abstract
 {
-    public interface ICorrectAnswerDal : IRepository<CorrectAnswer>
+    public interface ICorrectAnswerDal : IRepository<UserAnswer>
     {
 
     }
