@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-    public class Exam
+    public class Exam : BaseEntity
     {
         [Key]
         public int ExamId { get; set; }

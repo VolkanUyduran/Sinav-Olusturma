@@ -1,4 +1,5 @@
 ﻿using DataAccess.Abstract;
+using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,8 @@ using System.Text;
 
 namespace DataAccess.Concrete.Repositories
 {
-    public class GenericRepository<T> : IRepository<T> where T : class
-       
+    public class GenericRepository<T> : IRepository<T> where T : BaseEntity
+
     {
         Context context = new Context();
         DbSet<T> _object;
@@ -28,7 +29,7 @@ namespace DataAccess.Concrete.Repositories
 
         public T Get(Expression<Func<T, bool>> filter)
         {
-            return _object.SingleOrDefault(filter);
+            return _object.Where(x=>!x.IsDeleted).SingleOrDefault(filter);
         }
 
         public void Insert(T entity)
@@ -40,7 +41,7 @@ namespace DataAccess.Concrete.Repositories
 
         public List<T> List()
         {
-            return _object.ToList();
+            return _object.Where(x=>!x.IsDeleted).ToList();
         }
 
         public List<T> List(Expression<Func<T, bool>> filter)

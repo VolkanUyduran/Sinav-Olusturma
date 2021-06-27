@@ -257,7 +257,7 @@
                     <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                         <button class="btn btn-primary" type="button">Cancel</button>
                         <button class="btn btn-primary" type="reset">Reset</button>
-                        <button type="submit" class="btn btn-success" onclick="save()">Submit</button>
+                        <button type="button" class="btn btn-success" onclick="save()">Submit</button>
                     </div>
                 </div>
 
@@ -334,10 +334,13 @@
             },
             success: function (data) {
                 debugger;
-                if (data.result == 1)
+                if (data.result == 1) {
                     bootbox.alert(data.message);
-                else
+                }
+
+                else {
                     bootbox.alert("Onaylama Başarısız!");
+                }
 
             },
 

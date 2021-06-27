@@ -2,7 +2,9 @@
 using Business.Abstract;
 using Entities.Concrete;
 using Entities.Dto.Exam;
+using ExamProjectWebUI.Models;
 using HtmlAgilityPack;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -35,7 +37,7 @@ namespace ExamProjectWebUI.Controllers
             ViewBag.HeadingList = titleDto.HeadingList;//textboxa tüm değerleri yaz
             ViewBag.TextList = titleDto.TextList;
             return View();
-          
+
         }
 
         [HttpPost]
@@ -104,6 +106,61 @@ namespace ExamProjectWebUI.Controllers
 
         }
 
+        public IActionResult ExamList()
+        {
+            var examList = _examService.GetAll();
+            return View(examList);
+        }
 
+
+        //Sınav Silme
+        [HttpPost]
+        public JsonResult DeleteExam(int id)
+        {
+            if (id != 0)
+            {
+                var deleteExam = _examService.Delete(id);
+                if (deleteExam != null)
+                {
+                    return Json(true);
+                }
+            }
+
+            return Json(false);
+
+        }
+
+        public IActionResult ExamEntrance(int id)
+        {
+
+            if (id != 0)
+            {
+                var model = _examService.GetById(id);
+
+                return View(model);
+            }
+            else
+            {
+                var exList = _examService.GetAll();
+                return RedirectToAction("ExamList", exList);
+            }
+        }
+
+
+        //Sınavı tamamlama post action'ı
+        [HttpPost]
+        public JsonResult EnterExam(int examId, string[] correctAnswers)
+        {
+            if (examId != 0 && correctAnswers != null)
+            {
+                var completeExam = _examService.CompletedExam(examId, correctAnswers);
+
+                return Json(new { success = completeExam });
+            }
+            else
+            {
+                return Json(new { });
+            }
+        }
     }
 }

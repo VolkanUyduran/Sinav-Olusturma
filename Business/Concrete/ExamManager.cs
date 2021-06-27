@@ -3,6 +3,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.Dto.Exam;
 using HtmlAgilityPack;
+using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -10,13 +11,17 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class ExamManager:IExamService
+    public class ExamManager : IExamService
     {
-        IExamDal _examDal;
+        private readonly IExamDal _examDal;
+        private readonly IQuestionDal _questionDal;
+        private readonly IOptionDal _optionDal;
 
-        public ExamManager(IExamDal examDal)
+        public ExamManager(IExamDal examDal, IQuestionDal questionDal, IOptionDal optionDal)
         {
             _examDal = examDal;
+            _questionDal = questionDal;
+            _optionDal = optionDal;
         }
 
         public void Create(Exam entity)
@@ -24,9 +29,38 @@ namespace Business.Concrete
             _examDal.Insert(entity);
         }
 
-        public void Delete(Exam entity)
+        public Exam Delete(int id)
         {
-            _examDal.Delete(entity);
+            var findExam = _examDal.Get(x => x.ExamId == id);
+            if (findExam != null)
+            {
+                findExam.IsDeleted = true;
+                _examDal.Update(findExam);
+
+                var findQuestionList = _questionDal.List(x => !x.IsDeleted && x.ExamId == id);
+                foreach (var question in findQuestionList)
+                {
+                    question.IsDeleted = true;
+                    _questionDal.Update(question);
+
+                    var findOptionList = _optionDal.List(x => x.QuestionId == question.QuestionId);
+                    foreach (var op in findOptionList)
+                    {
+
+                        op.IsDeleted = true;
+                        _optionDal.Update(op);          
+                    }
+
+                }
+
+                return findExam;
+            }
+
+
+            return null;
+
+
+
         }
 
         public List<Exam> GetAll()
@@ -34,9 +68,36 @@ namespace Business.Concrete
             return _examDal.List();
         }
 
-        public Exam GetById(int id)
+        public ExamDto GetById(int id)
         {
-            return _examDal.Get(x => x.ExamId == id);
+
+            ExamDto modal = new ExamDto();
+            var findExam = _examDal.Get(x=>x.ExamId==id);
+            modal.ExamId = findExam.ExamId;
+            modal.Title = findExam.Title;
+            modal.Content = findExam.Content;
+
+            var findQuestionList = _questionDal.List(x => x.ExamId == id);
+            var resQuestion = findQuestionList.Adapt<List<QuestionDto>>();
+            modal.Questions = resQuestion;
+            List<Option> opList = new List<Option>();
+
+
+            foreach (var question in findQuestionList)
+            {
+                int QuestionId = question.QuestionId;
+                var findOptionList = _optionDal.List(x => x.QuestionId == question.QuestionId);
+
+                foreach (var option in findOptionList)
+                {
+                    opList.Add(option);
+                }
+            }
+
+            var resOption = opList.Adapt<List<OptionDto>>();
+            modal.Options = resOption;
+
+            return modal;
         }
 
         public void Update(Exam entity)
@@ -44,7 +105,8 @@ namespace Business.Concrete
             _examDal.Update(entity);
         }
 
-        public TitleDto GetDataFromWebSite() {
+        public TitleDto GetDataFromWebSite()
+        {
 
             int counter = 0;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -62,7 +124,7 @@ namespace Business.Concrete
 
             var secilenHtmlList = document.DocumentNode.SelectNodes(secilenhtml); //selectnodes methoduyla verdiğimiz xpathin htmlini getiriyoruz.
 
-            if (secilenHtmlList!=null)
+            if (secilenHtmlList != null)
             {
                 foreach (var items in secilenHtmlList)
                 {
@@ -86,7 +148,7 @@ namespace Business.Concrete
             }
 
             return titleDto;
-       
+
         }
 
         private string getData(string eklink)
@@ -103,11 +165,11 @@ namespace Business.Concrete
             StringBuilder stringBuilder = new StringBuilder();
             HtmlNodeCollection secilenHtmlList = document.DocumentNode.SelectNodes("/html/body/div[1]/div/main/article/div[2]/div/div[1]/div[1]/div[1]"); //selectnodes methoduyla verdiğimiz xpathin htmlini getiriyoruz.
 
-            if (secilenHtmlList!=null)
+            if (secilenHtmlList != null)
             {
                 foreach (var items in secilenHtmlList)
                 {
-                    if (items.SelectNodes("p")!=null )
+                    if (items.SelectNodes("p") != null)
                     {
                         foreach (var innerItem in items.SelectNodes("p"))//her ul un içindeki li de dön
                         {
@@ -119,11 +181,45 @@ namespace Business.Concrete
 
                         }
                     }
-                   
+
                 }
             }
-         
+
             return stringBuilder.ToString();
+        }
+
+        public List<string> CompletedExam(int examId, string[] correctAnswers)
+        {
+
+            var findExam = _examDal.Get(x=>x.ExamId==examId);
+            var findQuestionList = _questionDal.List(x => x.ExamId == examId);
+            int c = 0;
+            List<string> bgList = new List<string>();
+
+            foreach (var question in findQuestionList)
+            {
+                var findOptionList = _optionDal.List(x => x.QuestionId == question.QuestionId);
+                foreach (var option in findOptionList)
+                {
+                    if (option.OptionName == correctAnswers[c] && option.CorrectOption)
+                    {
+                        bgList.Add("green");
+                        //Gönderilen cevapla veri tabanındaki cevap dogru(karsılaştırma)
+                        break;
+
+                    }
+                    else if(option.OptionName == correctAnswers[c] && !option.CorrectOption)
+                    {
+                        bgList.Add("red");
+                        //yanlissa
+                       
+
+                    }
+                }
+                c++;
+            }
+
+            return bgList;
         }
 
     }

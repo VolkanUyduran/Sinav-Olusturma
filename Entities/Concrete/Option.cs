@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-   public class Option
+   public class Option : BaseEntity
     {
         [Key]
         public int OptionId { get; set; }
@@ -15,7 +15,6 @@ namespace Entities.Concrete
 
         public int QuestionId { get; set; }
         public virtual Question Question { get; set; }
-
         public ICollection<UserAnswer> UserAnswer { get; set; }
     }
 }

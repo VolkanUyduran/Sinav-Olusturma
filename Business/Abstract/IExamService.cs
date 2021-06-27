@@ -9,10 +9,11 @@ namespace Business.Abstract
     public interface IExamService
     {
         TitleDto GetDataFromWebSite();
-        Exam GetById(int id);
+        ExamDto GetById(int id);
         List<Exam> GetAll();
         void Create(Exam entity);
         void Update(Exam entity);
-        void Delete(Exam entity);
+        Exam Delete(int id);
+        List<string> CompletedExam(int examId, string[] correctAnswers);
     }
 }
