@@ -9,5 +9,6 @@ namespace DataAccess.EntityFramework
 {
     public class EfUserDal:GenericRepository<User>,IUserDal
     {
+
     }
 }

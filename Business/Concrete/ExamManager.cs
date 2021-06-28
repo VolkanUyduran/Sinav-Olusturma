@@ -31,6 +31,10 @@ namespace Business.Concrete
 
         public Exam Delete(int id)
         {
+            if (id==0)
+            {
+                return null;
+            }
             var findExam = _examDal.Get(x => x.ExamId == id);
             if (findExam != null)
             {
@@ -55,6 +59,7 @@ namespace Business.Concrete
 
                 return findExam;
             }
+            
 
 
             return null;

@@ -129,7 +129,7 @@ namespace ExamProjectWebUI.Controllers
             return Json(false);
 
         }
-
+        [HttpGet]
         public IActionResult ExamEntrance(int id)
         {
 

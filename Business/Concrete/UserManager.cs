@@ -45,13 +45,12 @@ namespace Business.Concrete
         {
             _userDal.Update(entity);
         }
+
         public User UserLogin(UserDto model) {
 
             var user = _userDal.Get(x => x.UserName == model.UserName && x.Password == model.Password);
             return user;
         
         }
-
-    
     }
 }

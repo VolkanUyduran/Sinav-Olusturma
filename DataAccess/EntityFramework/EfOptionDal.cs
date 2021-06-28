@@ -9,5 +9,6 @@ namespace DataAccess.EntityFramework
 {
    public class EfOptionDal:GenericRepository<Option>,IOptionDal
     {
+
     }
 }

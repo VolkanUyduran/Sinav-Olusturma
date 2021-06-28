@@ -33,15 +33,11 @@ namespace ExamProjectWebUI
             services.AddScoped<IExamService, ExamManager>();
             services.AddScoped<IExamDal, EfExamDal>();
 
-
             services.AddScoped<IQuestionService, QuestionManager>();
             services.AddScoped<IQuestionDal, EfQuestionDal>();
 
             services.AddScoped<IOptionService, OptionManager>();
             services.AddScoped<IOptionDal, EfOptionDal>();
-
-            services.AddScoped<ICorrectAnswerService, CorrectAnswerManager>();
-            services.AddScoped<ICorrectAnswerDal, EfCorrectAnswerDal>();
 
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<IUserDal, EfUserDal>();
